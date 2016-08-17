@@ -47,7 +47,12 @@ def try_match(file)
   end
 end
 
-test_file = try_match(ARGV[0])
-command = "mix test #{test_file} #{ARGV[1..-1].join(" ")}"
-puts command
-puts `#{command}`
+file = ARGV[0]
+file = file[(Dir.current.size + 1)..-1] if file.starts_with?(Dir.current)
+test_file = try_match(file)
+
+exit unless test_file
+
+args = ["test", test_file.as(String)] + ARGV[1..-1]
+puts "mix #{args.join(" ")}"
+system "mix", args
